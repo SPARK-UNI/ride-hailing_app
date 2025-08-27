@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RideMap - Bản đồ Realtime Traffic & Đặt xe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <link rel="stylesheet" href="css\style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2 style="margin-top: 0; color: var(--primary-darker); text-align: center;">RIDEMAP</h2>
+            
+            <div class="control-group">
+                <h3>1. Chọn chuyến đi</h3>
+                <div class="vehicle-selector">
+                    <input type="radio" name="vehicle" id="motorbike" value="motorbike" checked onchange="setVehicleType('motorbike')">
+                    <label for="motorbike">🏍️ Xe máy</label>
+                    <input type="radio" name="vehicle" id="car" value="car" onchange="setVehicleType('car')">
+                    <label for="car">🚗 Ô tô</label>
+                </div>
+                <div>
+                    <input type="text" class="form-control" id="startLocation" placeholder="📍 Điểm xuất phát...">
+                    <input type="text" class="form-control" id="endLocation" placeholder="🏁 Điểm đến...">
+                    <button class="btn btn-primary" onclick="findRouteByAddress()">Tìm đường & Ước tính giá</button>
+                </div>
+            </div>
+            
+            <div id="trip-details-card" class="control-group" style="display: none;">
+                <h3>2. Chi tiết chuyến đi</h3>
+                <div id="routeInfo"></div>
+                <div id="booking-section" style="margin-top: 15px;">
+                    <div id="payment-options">
+                        <strong>Chọn hình thức thanh toán:</strong>
+                        <div class="payment-methods">
+                           <label>
+                               <input type="radio" name="payment" value="cash" checked onchange="handlePaymentSelection(this.value)">
+                               <div><span class="icon">💵</span><br>Tiền mặt</div>
+                           </label>
+                           <label>
+                               <input type="radio" name="payment" value="wallet" onchange="handlePaymentSelection(this.value)">
+                                <div><span class="icon">📱</span><br>Ví điện tử</div>
+                           </label>
+                           <label>
+                               <input type="radio" name="payment" value="card" onchange="handlePaymentSelection(this.value)">
+                                <div><span class="icon">💳</span><br>Thẻ</div>
+                           </label>
+                        </div>
+                        <div id="payment-details" style="display:none;">
+                            <div id="card-form" style="display:none;">
+                                <input type="text" id="card-number" class="form-control" placeholder="Số thẻ">
+                                <div class="card-form-group">
+                                    <input type="text" id="card-expiry" class="form-control" placeholder="MM/YY">
+                                    <input type="text" id="card-cvv" class="form-control" placeholder="CVV">
+                                </div>
+                            </div>
+                            <div id="wallet-qr" style="display:none; text-align:center;">
+                                <img src="assets\qr.jpg" alt="QR Code" width="150">
+                            </div>
+                        </div>
+                    </div>
+                    <button id="bookBtn" class="btn btn-success" onclick="handleBookingClick()">✅ Đặt Xe Ngay</button>
+                    <div id="initialBookingStatus" class="booking-status" style="display: none; margin-top: 10px;"></div>
+                </div>
+            </div>
+            
+            <div id="driver-info-card" class="control-group" style="display: none;">
+                <h3>3. Tài xế & Trạng thái</h3>
+                <div class="driver-details">
+                    <div class="driver-name" id="driver-name-display"></div>
+                    <div class="vehicle-info" id="vehicle-info-display"></div>
+                </div>
+                <div id="trip-status-display" class="booking-status"></div>
+                <button id="cancelBtn" class="btn btn-danger" onclick="clearAll()" style="margin-top: 15px;">⛔ Hủy Chuyến</button>
+            </div>
+
+            <div class="control-group">
+                <h3>Tiện Ích</h3>
+                <button class="btn btn-warning" onclick="refreshTraffic()">Cập nhật giao thông</button>
+                <button class="btn btn-danger" onclick="clearAll()" style="margin-top: 10px;">Đặt lại</button>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+    </div>
+    
+    <div id="rating-modal">
+        <div class="rating-box">
+            <h3>Đánh giá chuyến đi</h3>
+            <p>Vui lòng đánh giá tài xế <b id="driver-name-rating"></b></p>
+            <div class="rating-stars" id="rating-stars-container">
+                <span data-value="1">★</span><span data-value="2">★</span><span data-value="3">★</span><span data-value="4">★</span><span data-value="5">★</span>
+            </div>
+            <button class="btn btn-success" onclick="submitRating()">Gửi Đánh Giá</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="js\config.js"></script>
+    <script src="js\utils.js"></script>
+    <script src="js\map.js"></script>
+    <script src="js\booking.js"></script>
+    <script src="js\app.js"></script>
+</body>
+</html>
